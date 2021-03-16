@@ -32,106 +32,126 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Instagram",style: TextStyle(color: Colors.black),),
+        title: Text(
+          "Instagram",
+          style: TextStyle(color: Colors.black),
+        ),
         backgroundColor: Colors.white,
         elevation: 1,
       ),
       body: Container(
         child: isLoading
             ? Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                itemCount: data.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(vertical: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 20,
-                          margin: EdgeInsets.symmetric(vertical: 5.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    child: Image.network(
-                                        data[index].lowThumbnail)),
-                              ),
-                              Expanded(
-                                  flex: 4,
-                                  child: Text(data[index].channelname)),
-                              Icon(Icons.more_vert)
-                            ],
-                          ),
-                        ),
-                        Container(
-                          child: Image.network(data[index].highThumbnail),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              vertical: 5.0, horizontal: 2.0),
-                          child: Row(
-                            children: [
-                              Container(
-                                child: Icon(FontAwesomeIcons.heart),
-                                padding: EdgeInsets.symmetric(horizontal: 5.0),
-                              ),
-                              Container(
-                                  child: Icon(FontAwesomeIcons.comment),
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 5.0)),
-                              Container(
-                                child: Icon(FontAwesomeIcons.paperPlane),
-                                padding: EdgeInsets.symmetric(horizontal: 5.0),
-                              ),
-                              Spacer(),
-                              Icon(FontAwesomeIcons.bookmark)
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10.0, vertical: 5.0),
-                          child: Row(children: [
-                            Expanded(
-                           child: !data[index].isClicked ?Text(
-                              data[index].title.substring(0, 15),
-                              textAlign: TextAlign.left,
-                              overflow: TextOverflow.ellipsis
-                            ):Text(
-                              data[index].title,
-                              // textAlign: TextAlign.left,
-                              // overflow: TextOverflow.ellipsis
-                            )
-                            ),
-                            data[index].isClicked
-                                ?Container()
-                                : Container(
+            : NotificationListener<ScrollNotification>(
+                onNotification: (scrollInfo) {
+                  if (!isLoading &&
+                      scrollInfo.metrics.pixels ==
+                          scrollInfo.metrics.maxScrollExtent) {
+                    getData();
+                    // start loading data
+                    setState(() {
+                      isLoading = true;
+                    });
+                  }
+                },
+                child: ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 20,
+                              margin: EdgeInsets.symmetric(vertical: 5.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
                                     padding:
-                                        EdgeInsets.symmetric(horizontal: 5),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          data[index].isClicked =
-                                              !data[index].isClicked;
-                                        });
-                                      },
-                                      child: Text(
-                                        "show More",
-                                        style: TextStyle(
-                                            fontSize: 12.0,
-                                            color: Colors.blueAccent),
-                                      ),
-                                    )),
-                          ]),
-                        )
-                      ],
-                    ),
-                  );
-                }),
+                                        EdgeInsets.symmetric(horizontal: 10.0),
+                                    child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                        child: Image.network(
+                                            data[index].lowThumbnail)),
+                                  ),
+                                  Expanded(
+                                      flex: 4,
+                                      child: Text(data[index].channelname)),
+                                  Icon(Icons.more_vert)
+                                ],
+                              ),
+                            ),
+                            Container(
+                              child: Image.network(data[index].highThumbnail),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 5.0, horizontal: 2.0),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    child: Icon(FontAwesomeIcons.heart),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5.0),
+                                  ),
+                                  Container(
+                                      child: Icon(FontAwesomeIcons.comment),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 5.0)),
+                                  Container(
+                                    child: Icon(FontAwesomeIcons.paperPlane),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5.0),
+                                  ),
+                                  Spacer(),
+                                  Icon(FontAwesomeIcons.bookmark)
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 5.0),
+                              child: Row(children: [
+                                Expanded(
+                                    child: !data[index].isClicked
+                                        ? Text(
+                                            data[index].title.substring(0, 15),
+                                            textAlign: TextAlign.left,
+                                            overflow: TextOverflow.ellipsis)
+                                        : Text(
+                                            data[index].title,
+                                            // textAlign: TextAlign.left,
+                                            // overflow: TextOverflow.ellipsis
+                                          )),
+                                data[index].isClicked
+                                    ? Container()
+                                    : Container(
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 5),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              data[index].isClicked =
+                                                  !data[index].isClicked;
+                                            });
+                                          },
+                                          child: Text(
+                                            "show More",
+                                            style: TextStyle(
+                                                fontSize: 12.0,
+                                                color: Colors.blueAccent),
+                                          ),
+                                        )),
+                              ]),
+                            )
+                          ],
+                        ),
+                      );
+                    }),
+              ),
       ),
     );
   }
